@@ -32,6 +32,7 @@ type State = {
     width: number,
     height: number,
   },
+  firstTime: Boolean,
 };
 
 const noop = () => {};
@@ -58,6 +59,7 @@ class CopilotModal extends Component<Props, State> {
     },
     animated: false,
     containerVisible: false,
+    firstTime: true,
   };
 
   componentWillReceiveProps(nextProps: Props) {
@@ -188,6 +190,7 @@ class CopilotModal extends Component<Props, State> {
   }
 
   animateMove(obj = {}): void {
+    this.obj = obj;
     return new Promise((resolve) => {
       this.setState(
         { containerVisible: true },
@@ -267,6 +270,10 @@ class CopilotModal extends Component<Props, State> {
       <Animated.View key="arrow" style={[styles.arrow, this.state.arrow]} />,
       <Animated.View key="tooltip" style={[styles.tooltip, this.state.tooltip]} onLayout={ ({ nativeEvent: { layout } }) => {
         this.tooltipLayout = layout;
+        if(this.state.firstTime){
+          this.setState({ firstTime: false });
+          this.animateMove(this.obj);
+        }
       } }>
         <TooltipComponent
           isFirstStep={this.props.isFirstStep}
